@@ -1,10 +1,12 @@
 <template>
-  <UButton v-if="canInstall" size="xl" @click="installPWA"> Install </UButton>
+  <UButton v-if="canInstallPwa && !isIOS" size="xl" @click="installPWA">
+    Install
+  </UButton>
 </template>
 
 <script setup lang="ts">
 const deferredPrompt = ref<Event | null>(null);
-const canInstall = ref(false);
+const canInstallPwa = ref(false);
 const isIOS = ref(false);
 
 onBeforeMount(() => {
@@ -13,7 +15,7 @@ onBeforeMount(() => {
   window.addEventListener("beforeinstallprompt", (e: Event) => {
     e.preventDefault();
     deferredPrompt.value = e;
-    canInstall.value = true;
+    canInstallPwa.value = true;
     console.debug("🔥 beforeinstallprompt captured in Installer.vue");
   });
 });
@@ -31,7 +33,7 @@ const installPWA = () => {
       console.debug("❌ User dismissed the install prompt");
     }
 
-    canInstall.value = false;
+    canInstallPwa.value = false;
     deferredPrompt.value = null;
   });
 };
